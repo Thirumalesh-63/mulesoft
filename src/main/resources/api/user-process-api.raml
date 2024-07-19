@@ -1,0 +1,72 @@
+#%RAML 1.0
+title: user-process-api
+baseUri: http://localhost:8081/user-process-api
+traits:
+  error-responses: !include /Traits/error-response.raml
+  client_id_req: !include /exchange_modules/d26c9246-a2d4-48b3-aff1-af32e388e2db/client-id/1.0.0/client-id.raml
+
+/add-user:
+ is:
+    - error-responses
+    - client_id_req
+ post:
+  body:
+    application/json:
+          example: !include /examples/add-user-req.json
+            
+  responses:
+    200:
+      body:
+        application/json:
+          example: !include /examples/add-user-resp.json
+        
+  
+/login:
+  is:
+    - error-responses
+    - client_id_req
+  post:
+    body:
+      application/json:
+        example: !include /examples/login-req.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include /examples/login-resp.json
+
+/validate-user:
+  is:
+    - error-responses
+    - client_id_req
+  get:
+    queryParameters:
+      corelation-id: 
+        type: string
+        required: true
+        example: 'dbhfhgeqdklmacavlkasnk'
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include /examples/validate-user.json
+              
+/logout:
+  is:
+    - error-responses
+    - client_id_req
+  post:
+    body:
+      application/json:
+        example: !include /examples/logout.json
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include /examples/logout-resp.json
+          
+              
+          
+                                                 
+        
+

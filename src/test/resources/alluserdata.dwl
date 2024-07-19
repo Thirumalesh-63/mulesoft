@@ -1,0 +1,16 @@
+[
+	{
+    "user_id":"user5",
+   "Role":"Admin",
+    "userName":"rajesh",
+   "Password":"raj@321g",
+   "Email":"rajesh321@gmail.com"
+},
+{
+    "user_id":"user6",
+   "Role":"Admin",
+    "userName":"rajeswari",
+   "Password":"raj@321g",
+   "Email":"rajeswari321@gmail.com"
+}
+]

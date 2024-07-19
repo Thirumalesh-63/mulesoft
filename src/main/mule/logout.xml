@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<flow name="post:\logout:application\json:user-process-api-config" doc:id="de0f1991-67f6-4885-a40c-9c7497670a51" >
+		<logger level="INFO" doc:name="Logger" doc:id="2d6a30d9-5d67-4cf8-bd3b-3061d0ee82ad" message="logout process starts"/>
+		<db:select doc:name="Select" doc:id="181e7755-18e6-4ccd-9f6d-27f932a8488c" config-ref="Database_Config" target="userdata">
+			<db:sql ><![CDATA[select * from userlogin where user_id=:id;]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	id:payload.userId
+}]]]></db:input-parameters>
+		</db:select>
+		<choice doc:name="Choice" doc:id="cc8bb01b-ed35-4908-9f68-ff20c4ef3145" >
+			<when expression="#[vars.userdata[0].user_id != null]">
+				<choice doc:name="Choice" doc:id="dcb76020-c5ff-4acd-8905-556645cd60e1">
+			<when expression="#[vars.userdata[0].login_id == payload.correlation_id]">
+				<db:delete doc:name="Delete" doc:id="b695b43e-3e8e-464a-a19a-ccb48c8357c6" config-ref="Database_Config">
+					<db:sql><![CDATA[delete from userlogin where user_id=:id;]]></db:sql>
+					<db:input-parameters><![CDATA[#[{
+	id:payload.userId
+}]]]></db:input-parameters>
+				</db:delete>
+			</when>
+			<otherwise>
+				<raise-error doc:name="Raise error" doc:id="d3d787d1-d21e-42d5-bac1-d22e3fe0a852" type="CORRELATION:WRONG" description="correlation_id is wrong" />
+			</otherwise>
+		</choice>
+			</when>
+			<otherwise >
+				<raise-error doc:name="Raise error" doc:id="ef50cb92-b771-462d-8356-ce280c396da4" type="USER:NOT_FOUND" description="USER NOT LOGGED IN "/>
+			</otherwise>
+		</choice>
+		<ee:transform doc:name="Transform Message" doc:id="85fc39ba-6164-47db-8369-386fbd549a92" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  message: "logout succesfully"
+} as Object {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

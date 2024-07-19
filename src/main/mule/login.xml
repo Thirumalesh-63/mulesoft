@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="d566532c-6a8d-4cdf-a238-870d41b7c55b" >
+		<db:my-sql-connection host="db4free.net" port="3306" user="poc1234" password="poc1234567" database="scholarlibraries" />
+	</db:config>
+	<flow name="post:\login:application\json:user-process-api-config" doc:id="48d592ae-3b51-4dfe-bc68-f1580a5a0b09" >
+		<logger level="INFO" doc:name="Logger" doc:id="92a48b61-52a8-4f4b-98b9-7daf7b71d68b" message="user login starts"/>
+		<http:request method="GET" doc:name="Request" doc:id="451e2ee7-ef33-42e8-a6b3-c010722ef729" config-ref="HTTP_Request_configuration" path="/get-user" target="userdata">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"correlation_id" : "dffgvr",
+	"client_secret" : "rtgrhgty",
+	"client_id" : "tthtyhy"
+}]]]></http:headers>
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"id" : payload.userId
+}]]]></http:query-params>
+		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="27876112-1d1b-4e0d-9d9b-6d012f201e06" message="#[payload]" />
+		<ee:transform doc:name="Transform Message" doc:id="eb396dca-ff82-43e8-87b1-758d7fbc1284">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload
+]]></ee:set-payload>
+					</ee:message>
+					<ee:variables>
+						<ee:set-variable variableName="login_id"><![CDATA[%dw 2.0
+output text/plain
+---
+floor(random()*1000000000)+999999999
+]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+		<choice doc:name="Choice" doc:id="45f24102-0435-43f3-a054-1c6ba26a74a8">
+					<when expression="#[vars.userdata.user_password[0] == payload.password]">
+						<db:insert doc:name="Insert" doc:id="4e9c4539-4fe1-4370-b72e-40206d3b2b26" config-ref="Database_Config">
+							<db:sql><![CDATA[INSERT INTO userlogin(user_id, login_id, role, login_time) VALUES (:user_id, :login_id, :role, :login_time);
+]]></db:sql>
+							<db:input-parameters><![CDATA[#[{
+    "user_id":payload.userId,
+    "login_id":vars.login_id,
+    "role":vars.userdata[0].user_role,
+    "login_time": now() as String {format: "dd-MM-yyyy :HH:mm:ss"}
+}]]]></db:input-parameters>
+						</db:insert>
+					</when>
+					<otherwise>
+						<raise-error doc:name="Raise error" doc:id="8a1b1d0e-cc91-44b0-818f-dac964ce05b8" type="PASSWORD:NOTMATCH" description="password is wrong" />
+					</otherwise>
+				</choice>
+		<ee:transform doc:name="Transform Message" doc:id="10d8cef8-6e76-47aa-9c87-71037efca0a6" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  userId: vars.userdata[0].user_id,
+  correlation_id:vars.login_id
+} as Object {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

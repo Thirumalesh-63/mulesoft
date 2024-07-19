@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="7676688b-569d-44ae-80db-3cc5e9c14f96" basePath="/api" >
+		<http:request-connection host="user-system-api2.us-e2.cloudhub.io" port="80" />
+	</http:request-config>
+	<flow name="post:\add-user:application\json:user-process-api-config" doc:id="82923a25-88a5-44de-b45f-d76ae94a501a" >
+		<logger level="INFO" doc:name="Logger" doc:id="a97a6ed6-7a75-4192-978a-dee28fbc3c05" message="ADD LOG STARTS" />
+		<http:request method="GET" doc:name="Request" doc:id="5e8a703e-602b-4900-9147-0a3d3e635346" path="/get-all-user" target="alluserdata" config-ref="HTTP_Request_configuration">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"correlation_id" : "yyhthey",
+	"client_secret" : "Vahstrlue",
+	"client_id" : "rtgrsg"
+}]]]></http:headers>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="f6c7cc2f-c2c3-47c7-8f42-da6c465fb256" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="maxUserId" ><![CDATA[%dw 2.0
+output application/json
+
+var userIdArray = (vars.alluserdata map $.user_id) default [] // Ensure userIdArray is not null
+// Extracting numeric parts and converting them to numbers
+var numericParts = userIdArray map ((code) -> (code replace /user/ with "" default "0") as Number)
+
+var maxUserId = max(numericParts) as Number
+---
+maxUserId
+
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="Transform Message" doc:id="df83adb2-2ef7-4340-821f-5160df63985e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+
+{
+  "userId": "user" ++ (vars.maxUserId + 1),
+  "userName": payload.userName,
+  "Role": payload.Role,
+  "Password": payload.Password,
+  "Email":payload.Email
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<http:request method="POST" doc:name="Request" doc:id="2a74fe08-09dc-4d67-afc3-5a82d9953852" path="/add-user" config-ref="HTTP_Request_configuration">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"correlation_id" : "trggggrfhr",
+	"client_secret" : "trhtgh",
+	"client_id" : "fgrtgtr"
+}]]]></http:headers>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="aaa526c5-6868-4a92-9f5b-82c1130948fa" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  userId: "user" ++ (vars.maxUserId + 1),
+  message: "user created succesfully"
+} as Object {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="21d4bd21-2768-4f5d-9d52-f5f749b6f276" message="ADDING USER END"/>
+	</flow>
+</mule>

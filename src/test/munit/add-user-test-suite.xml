@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="add-user-test-suite.xml" />
+	<munit:test name="add-user-test-suite-post:\add-user:application\json:user-process-api-configTest" doc:id="4b554eca-4703-4c7a-85e2-7771724cfb2d" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="71cee5b8-31e9-48ba-9b74-ce54180205ce" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="5e8a703e-602b-4900-9147-0a3d3e635346" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="alluserdata" value="#[ readUrl('classpath://alluserdata.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="9b0f1a15-9ede-4d69-87e7-298ee9ecb269" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="2a74fe08-09dc-4d67-afc3-5a82d9953852" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[[]]" mediaType="application/java" encoding="UTF-8" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="1fcfe4de-d4b1-4ae9-a133-443c459c0df7" >
+				<munit:payload value="#[[]]" encoding="UTF-8" mediaType="application/java" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to post:\add-user:application\json:user-process-api-config" doc:id="1682e5fe-d2a2-4d04-8c40-3ecbab78540f" name="post:\add-user:application\json:user-process-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="e967a35b-aa3b-498f-bee9-34b1d9dff462" actual="#[vars.maxuserId as Number]" expected='#[6]'/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="add-user-test-suiteTest3" doc:id="e0c01393-c997-44fc-bf61-f17e54b7177d" expectedErrorType="PASSWORD:NOTMATCH">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="0b5debbb-20de-487c-b64f-904aa5ef9ba7" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="451e2ee7-ef33-42e8-a6b3-c010722ef729" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="userInfo" value="#[[]]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="df335393-b91e-4372-9baa-ff673269455c" >
+				<munit:payload value='#[{&#10;	userId:"user5",&#10;password:"Thiru@123"&#10;&#10;}]' encoding="UTF-8" mediaType="application/java" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow Reference" doc:id="b7de546e-21aa-4eb3-ad87-bf3c1c9642db" name="post:\login:application\json:user-process-api-config"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="add-user-test-suiteTest4" doc:id="ef441690-bf3b-4940-b972-12cdc72072f8" expectedErrorType="USER:NOT_FOUND">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="a71b87dc-fd34-4a4d-8892-84b42ca10a85" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="181e7755-18e6-4ccd-9f6d-27f932a8488c" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="userdata" value="#[[]]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="e3e9a9e9-7a77-474c-b2ff-21f3da8c22b8" name="post:\logout:application\json:user-process-api-config"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="add-user-test-suiteTest5" doc:id="c1ce92d7-d65d-4b1b-80d9-d8ad654c3270" expectedErrorType="CORRELATION:WRONG">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="11dda23c-5eec-417f-98ec-1dd74acdd469" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="181e7755-18e6-4ccd-9f6d-27f932a8488c" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="userdata" value="#[ readUrl('classpath://userdata.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="8108d8b9-192e-4fcc-a98d-bf128658c126" >
+				<munit:payload value='#[{&#10;	userId:"user5",&#10;	correlation_id:"653294521"&#10;}]' />
+			</munit:set-event>
+			<flow-ref doc:name="Flow Reference" doc:id="80d7a2ee-d778-4277-b1f6-c003443fa801" name="post:\logout:application\json:user-process-api-config"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="add-user-test-suiteTest" doc:id="1506684f-5462-4846-b1c1-00d30a4fd531" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="8436372c-010a-457e-87a2-cf8c5f3099f3" processor="db:insert">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="4e9c4539-4fe1-4370-b72e-40206d3b2b26" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[[]]" mediaType="application/java" encoding="UTF-8" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="bf6c3f7a-2f6f-479f-bfc2-c0efcd0d2e77" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="451e2ee7-ef33-42e8-a6b3-c010722ef729" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[{ userId: 'user5',&#10; 	Role: 'Admin',&#10; 	 userName: 'rajesh',&#10; 	  Password: 'raj@321g',&#10; 	   Email: 'rajesh321@gmail.com'&#10; }]" mediaType="application/java" encoding="UTF-8" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="d009e030-d945-4a56-9472-9c126c90a23e" />
+			<flow-ref doc:name="Flow Reference" doc:id="c63b2c03-f1ec-44b4-b149-c0b8aabdf968" name="post:\login:application\json:user-process-api-config"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="d6eb78ba-f98b-4b4e-ab1f-422067f3c040" is="#[MunitTools::allOf([MunitTools::notNullValue(),MunitTools::withMediaType('application/json')])]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="add-user-test-suiteTest1" doc:id="a93bf31c-29c8-45d3-b6ab-e0ef43c45751" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="093bb457-c4c1-4dd3-8e72-3e312569456d" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="181e7755-18e6-4ccd-9f6d-27f932a8488c" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="userdata" value="#[ readUrl('classpath://userdata.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="5ed46b33-afba-48f5-9f94-4603b46cb60b" processor="db:delete">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="b695b43e-3e8e-464a-a19a-ccb48c8357c6" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="2fa0489b-79bc-4a67-a7d0-7a9d3fe05c7e" >
+				<munit:payload value='#[{&#10;	user_id:"user5",&#10;	correlation_id:"9652982411"&#10;}]' encoding="UTF-8" mediaType="application/java" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow Reference" doc:id="bd658e9a-53ad-4306-b74b-04faf5a16442" name="post:\logout:application\json:user-process-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="351bbe23-2d19-4ea4-b016-4ed784c81b21" actual="#[payload.message]" expected='#["logout succesfully"]'/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="add-user-test-suiteTest2" doc:id="b9acc321-0163-432c-b4f7-dc9c42da349e" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="d1eb6691-81c8-4e8f-ba64-2c0343b74445" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ba98d422-18ba-4c00-a0a2-188af5e3fe47" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="userdata" value="#[ readUrl('classpath://alluserdata.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="4cde1973-1cd5-4345-96b4-277d236c079d" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="213e8aac-af38-45bd-bdb5-4cf906cd7865" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="userdata2" value="#[ readUrl('classpath://userdata2.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="14a0cbf2-4137-4df2-8d74-45b9c95277ad" name="get:\validate-user:user-process-api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="ef016ffc-5bd7-4255-9871-ed3facc2714d" actual="#[payload.user_id]" expected='#["user5"]'/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="add-user-test-suiteTest6" doc:id="297ef0d9-20b1-4b04-85ad-a71ce614d329" expectedErrorType="USER:NOT_FOUND">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="4b15211b-6294-4639-8ab0-5c76b4171461" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ba98d422-18ba-4c00-a0a2-188af5e3fe47" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="088a8ab6-bd60-4950-b3a7-ddf85e86801c" name="get:\validate-user:user-process-api-config"/>
+		</munit:execution>
+	</munit:test>
+
+
+</mule>

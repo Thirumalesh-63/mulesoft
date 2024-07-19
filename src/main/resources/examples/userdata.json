@@ -1,0 +1,58 @@
+[
+  {
+    "email_id": "thurmalraj@gmail.com",
+    "user_role": "Admin",
+    "user_password": "Thirumal@3",
+    "user_id": "user1",
+    "user_name": "thirumal raj1"
+  },
+  {
+    "email_id": "thurmal@gmail.com",
+    "user_role": "Student",
+    "user_password": "Thirumal@123",
+    "user_id": "user12",
+    "user_name": "thirumal"
+  },
+  {
+    "email_id": "harish@gmail.com",
+    "user_role": "Admin",
+    "user_password": "harish@321",
+    "user_id": "user13",
+    "user_name": "harish"
+  },
+  {
+    "email_id": "ramesh@gmail.com",
+    "user_role": "Admin",
+    "user_password": "ramesh@321",
+    "user_id": "user14",
+    "user_name": "ramesh"
+  },
+  {
+    "email_id": "durga@gmail.com",
+    "user_role": "Admin",
+    "user_password": "durga@321",
+    "user_id": "user16",
+    "user_name": "durga"
+  },
+  {
+    "email_id": "venkateswarlu@gmail.com",
+    "user_role": "STUDENT",
+    "user_password": "Thiru@123",
+    "user_id": "user2",
+    "user_name": "venkateshwarlu"
+  },
+  {
+    "email_id": "venky@gmail.com",
+    "user_role": "Admin",
+    "user_password": "Thiru@123",
+    "user_id": "user3",
+    "user_name": "venky"
+  },
+  {
+    "email_id": "raj321@gmail.com",
+    "user_role": "Admin",
+    "user_password": "raj@321",
+    "user_id": "user4",
+    "user_name": "gangesh"
+  }
+]
